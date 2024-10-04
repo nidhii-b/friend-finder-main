@@ -1,0 +1,52 @@
+services:
+  backend:
+    env_file:
+      - .env
+    build: .
+    container_name: friend-finder-backend
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    command:
+      - bash
+      - -c
+      - |
+        python3 server.py
+    volumes:
+      - ./:/app:rw
+    depends_on:
+      - db
+    restart: always
+#    networks:
+#      - friend-finder-network
+
+  db:
+    env_file:
+      - .env
+    command: --init-file /data/application/init.sql
+    container_name: friend-finder-database
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_root_password}
+      MYSQL_USER: ${DB_user}
+      MYSQL_PASSWORD: ${DB_password}
+      MYSQL_DATABASE: ${DB_database}
+    expose:
+      - ${DB_PORT}
+    ports:
+      - ${DB_PORT}:3306
+#    networks:
+#      - friend-finder-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/data/application/init.sql
+
+
+volumes:
+  mysql-data:
+    external: false
+
+#networks:
+#  friend-finder-network:
+#    external: false
+#    name: friend-finder-network

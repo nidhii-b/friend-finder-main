@@ -1,0 +1,12 @@
+services:
+  backend:
+    build: .
+    container_name: friend-finder-cli
+    command:
+      - bash
+      - -c
+      - |
+        gcc register.cpp -o exec && ./exec
+    volumes:
+      - ./:/app:rw
+    restart: always
